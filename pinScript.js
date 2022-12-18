@@ -13,12 +13,11 @@ var ciao = new Set();
 function getCurrentItems() {
     let items = document.querySelectorAll("[loading=auto]");
     for (let i = 0; i < items.length; i++) {
-        if ((items[i].src).indexOf("/140x140_RS/") == -1 && (items[i].src).indexOf("/images/user/") == -1 ) {
+        if ((items[i].src).indexOf("/140x140_RS/") == -1 && (items[i].src).indexOf("/images/user/") == -1 && (items[i].src).indexOf("/75x75_RS/") == -1 ) {
             var body = document.body.innerHTML;
             if (body.indexOf("data-test-id=\"MobileFeed\"") != -1 && body.lastIndexOf("data-test-id=\"MobileFeed\"") > body.indexOf(items[i].src)) {
-                console.log(body.lastIndexOf("data-test-id=\"MobileFeed\"") + "  -   " + body.indexOf(items[i].src));
                 itemId[itemId.length] = (items[i].src).replace("/236x/", "/" + resolutionDownload + "/").replace("/474x/", "/" + resolutionDownload + "/");
-            }  else {
+            } else {
                 forceStop = true;
             }
             if (body.indexOf("data-test-id=\"MobileFeed\"") == -1) itemId[itemId.length] = (items[i].src).replace("/236x/", "/" + resolutionDownload + "/").replace("/474x/", "/" + resolutionDownload + "/");
@@ -73,8 +72,11 @@ function loadPage() {
 }
 function downloadImg(items, id) {
     setTimeout(function() {
-        console.log(items);
-        forceDownload(items[id], items[id].substring(items[id].lastIndexOf("/") + 1));
+        try {
+                    forceDownload(items[id], items[id].substring(items[id].lastIndexOf("/") + 1));
+        } catch (ex) {
+            console.log(ex);
+        }
         if (items.length >= id)  downloadImg(items, id+1);
     }, Math.random() * maxDownloadDelay + minDownloadDelay);
 }
