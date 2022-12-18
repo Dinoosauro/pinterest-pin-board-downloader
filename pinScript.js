@@ -8,11 +8,21 @@ let maxDownloadDelay = 250; // the maxinum time the script should wait before do
 let itemId = Array(1).fill("");
 let stopSet = 0;
 let oldSetStop = 0;
+let forceStop = false;
 var ciao = new Set();
 function getCurrentItems() {
     let items = document.querySelectorAll("[loading=auto]");
     for (let i = 0; i < items.length; i++) {
-        if ((items[i].src).indexOf("/140x140_RS/") == -1 && (items[i].src).indexOf("/images/user/") == -1) itemId[itemId.length] = (items[i].src).replace("/236x/", "/" + resolutionDownload + "/").replace("/474x/", "/" + resolutionDownload + "/");
+        if ((items[i].src).indexOf("/140x140_RS/") == -1 && (items[i].src).indexOf("/images/user/") == -1 ) {
+            var body = document.body.innerHTML;
+            if (body.indexOf("data-test-id=\"MobileFeed\"") != -1 && body.lastIndexOf("data-test-id=\"MobileFeed\"") > body.indexOf(items[i].src)) {
+                console.log(body.lastIndexOf("data-test-id=\"MobileFeed\"") + "  -   " + body.indexOf(items[i].src));
+                itemId[itemId.length] = (items[i].src).replace("/236x/", "/" + resolutionDownload + "/").replace("/474x/", "/" + resolutionDownload + "/");
+            }  else {
+                forceStop = true;
+            }
+            if (body.indexOf("data-test-id=\"MobileFeed\"") == -1) itemId[itemId.length] = (items[i].src).replace("/236x/", "/" + resolutionDownload + "/").replace("/474x/", "/" + resolutionDownload + "/");
+        } 
     }
     ciao = new Set(itemId);
     if (oldSetStop == ciao.size) {
@@ -27,6 +37,11 @@ let height = 0;
 let currentPageHeight = document.body.scrollHeight;
 let timeCheck = 0;
 function loadPage() {
+    if (forceStop) {
+        console.log("Starting image downloading...");
+        downloadImg(Array.from(ciao), 1);
+        return;
+    }
     if (document.body.innerHTML.indexOf("O-T\"><svg class=\"") == -1) {
         height = height + (Math.random() * 1400 + 400);
         window.scrollTo({top: height, behavior: 'smooth'});
@@ -58,6 +73,7 @@ function loadPage() {
 }
 function downloadImg(items, id) {
     setTimeout(function() {
+        console.log(items);
         forceDownload(items[id], items[id].substring(items[id].lastIndexOf("/") + 1));
         if (items.length >= id)  downloadImg(items, id+1);
     }, Math.random() * maxDownloadDelay + minDownloadDelay);
