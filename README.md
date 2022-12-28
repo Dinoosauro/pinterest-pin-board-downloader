@@ -8,3 +8,6 @@ NOTE: Before using this script, make sure your browser doesn't require a manual 
 4. Paste the script and wait that the download starts.
 ### Settings
 You can change the image quality and the time the script should wait before downloading the next picture at the start of the script.
+
+### Warning
+I don't claim any responsibilties at all for the usage of this script and the consequences.
